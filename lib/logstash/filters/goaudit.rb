@@ -56,7 +56,7 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
   end
 
   def filter(event)
-    @logger.debug? && @logger.debug("Running json filter", :event => event)
+    @logger.debug? && @logger.debug("Running go-audit filter", :event => event)
 
     source = event.get(@source)
 
@@ -89,9 +89,10 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
       }
 
       uid_map = parsed["uid_map"] || {}
+      messages = parsed["messages"] || []
 
       # gather types
-      groups = parsed["messages"].group_by{ |h| h["type"]}.each{|_, v| v.map!{|h| h["data"].strip}}
+      groups = messages.group_by{ |h| h["type"]}.each{|_, v| v.map!{|h| h["data"].strip}}
 
       groups.each do |type, msgs|
         case type
@@ -314,12 +315,14 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
     arg_len = data.delete("#{arg}_len").to_i
     val = []
 
-    0.step do |i|
-      sub_arg = "#{arg}[#{i.to_int}]"
+    i = 0
+    while true
+      sub_arg = "#{arg}[#{i}]"
       if !data.key?(sub_arg)
         break
       end
       val.push(data.delete(sub_arg))
+      i += 1
     end
 
     data[arg] = val.join
@@ -379,7 +382,8 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
   end
 
   def split_fields(str)
-    str.split.map{|el| el.split('=', 2) }.to_h
+    # to_h on Array is only availble in Ruby 2.1+
+    Hash[*str.split.map{|el| el.split('=', 2) }.flatten]
   end
 
   def convert_value(str, parse_hex)

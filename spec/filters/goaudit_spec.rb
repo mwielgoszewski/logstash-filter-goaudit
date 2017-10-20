@@ -29,7 +29,7 @@ describe LogStash::Filters::GoAudit do
       }
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("@timestamp") }.is_a?(LogStash::Timestamp) 
       insist { LogStash::Json.dump(subject.get("@timestamp")) } == "\"2016-03-31T18:10:20.316Z\""
       insist { subject.get("data")["sequence"] } == 1226433
@@ -61,7 +61,7 @@ describe LogStash::Filters::GoAudit do
       }
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("data").include?("timestamp") }
       insist { LogStash::Json.dump(subject.get("@timestamp")) } == "\"2016-03-31T18:33:36.328Z\""
       insist { subject.get("data") }.include?("syscall")
@@ -150,7 +150,7 @@ describe LogStash::Filters::GoAudit do
       }
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("@timestamp") }.is_a?(LogStash::Timestamp) 
       insist { LogStash::Json.dump(subject.get("@timestamp")) } == "\"2016-03-31T18:33:36.328Z\""
       insist { subject.get("data") }.include?("execve")
@@ -190,7 +190,7 @@ describe LogStash::Filters::GoAudit do
       }
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("@timestamp") }.is_a?(LogStash::Timestamp) 
       insist { LogStash::Json.dump(subject.get("@timestamp")) } == "\"2016-03-31T18:33:36.328Z\""
       insist { subject.get("data") }.include?("paths")
@@ -225,7 +225,7 @@ describe LogStash::Filters::GoAudit do
       }
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("@timestamp") }.is_a?(LogStash::Timestamp) 
       insist { LogStash::Json.dump(subject.get("@timestamp")) } == "\"2016-03-31T18:33:36.328Z\""
       insist { subject.get("data") }.include?("cwd")
@@ -303,7 +303,7 @@ describe LogStash::Filters::GoAudit do
       }
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("@timestamp") }.is_a?(LogStash::Timestamp) 
       insist { LogStash::Json.dump(subject.get("@timestamp")) } == "\"2016-03-31T18:33:36.328Z\""
       insist { subject.get("data") }.include?("syscall")
@@ -367,7 +367,7 @@ describe LogStash::Filters::GoAudit do
       ]
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("data")["execve"]["command"] } == "stuff=things"
     end
 
@@ -382,7 +382,7 @@ describe LogStash::Filters::GoAudit do
       ]
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("data")["execve"]["command"] } == "stuff="
     end
 
@@ -408,7 +408,7 @@ describe LogStash::Filters::GoAudit do
       ]
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("data") }.include?("socket_address")
       insist { subject.get("data")["socket_address"]["family"] } == "inet"
       insist { subject.get("data")["socket_address"]["port"] } == 9999
@@ -476,7 +476,7 @@ describe LogStash::Filters::GoAudit do
       ]
     })
 
-    sample("message" => data) do
+    sample data do
       insist { subject.get("data") }.include?("proctitle")
       insist { subject.get("data")["proctitle"] } == "nc -l 9999"
     end
