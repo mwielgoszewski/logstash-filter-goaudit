@@ -62,22 +62,6 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
 
     begin
       parsed = LogStash::Json.load(source)
-    rescue => e
-      unless @skip_on_invalid_json
-        @tag_on_failure.each{|tag| event.tag(tag)}
-        @logger.warn("Error parsing json", :source => @source, :raw => source, :exception => e)
-      end
-      return
-    end
-
-    if @target
-      event.set(@target, parsed)
-    else
-      unless parsed.is_a?(Hash)
-        @tag_on_failure.each{|tag| event.tag(tag)}
-        @logger.warn("Parsed JSON object/hash requires a target configuration option", :source => @source, :raw => source)
-        return
-      end
 
       result = {
         "@timestamp" => Time.at(parsed["timestamp"].to_f),
@@ -122,6 +106,22 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
       end
 
       build_message(result)
+    rescue => e
+      unless @skip_on_invalid_json
+        @tag_on_failure.each{|tag| event.tag(tag)}
+        @logger.warn("Error parsing json", :source => @source, :raw => source, :exception => e)
+      end
+      return
+    end
+
+    if @target
+      event.set(@target, result)
+    else
+      unless result.is_a?(Hash)
+        @tag_on_failure.each{|tag| event.tag(tag)}
+        @logger.warn("Parsed JSON object/hash requires a target configuration option", :source => @source, :raw => source)
+        return
+      end
 
       # TODO: (colin) the timestamp initialization should be DRY'ed but exposing the similar code
       # in the Event#init_timestamp method. See https://github.com/elastic/logstash/issues/4293
@@ -152,7 +152,7 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
 
     filter_matched(event)
 
-    @logger.debug? && @logger.debug("Event after json filter", :event => event)
+    @logger.debug? && @logger.debug("Event after go-audit filter", :event => event)
   end
 
   def parse_syscall(msgs, result, uid_map)
