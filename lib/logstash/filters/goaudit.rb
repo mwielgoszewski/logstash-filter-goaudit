@@ -370,7 +370,7 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
 
       # Overflow uint32 is `null`
       if uid == "4294967295"
-        data[uid] = nil
+        data[find_uid] = nil
         return
       end
 
@@ -451,10 +451,10 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
           message.push("to")
           include_cmd = true
           if data.key?("socket_address")
-            if data["socket_address"].key?("ip")
-              message.push("`%{ip}:%{port}`" % data["socket_address"])
+            if data["socket_address"].key?("ip") && data["socket_address"].key?("port")
+              message.push("`%s:%s`" % [data["socket_address"]["ip"], data["socket_address"]["port"]])
             elsif data["socket_address"].key?("path")
-              message.push("`%{path}`" % data["socket_address"])
+              message.push("`%s`" % data["socket_address"]["path"])
             else
               message.push("`unknown address")
             end
