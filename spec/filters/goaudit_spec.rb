@@ -1,7 +1,7 @@
 # encoding: utf-8
+require 'spec_helper'
 require "logstash/filters/goaudit"
 require 'json'
-require 'spec_helper'
 
 
 describe LogStash::Filters::GoAudit do

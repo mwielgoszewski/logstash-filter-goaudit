@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    logstash-filter-example (3.0.1)
-      logstash-core-plugin-api (~> 2.0)
+    logstash-filter-goaudit (1.0)
+      logstash-core-plugin-api (>= 1.60, <= 2.99)
 
 GEM
   remote: https://rubygems.org/
@@ -124,7 +124,7 @@ PLATFORMS
 
 DEPENDENCIES
   logstash-devutils
-  logstash-filter-example!
+  logstash-filter-goaudit!
 
 BUNDLED WITH
    1.15.4
