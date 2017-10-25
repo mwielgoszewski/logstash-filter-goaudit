@@ -399,7 +399,7 @@ class LogStash::Filters::GoAudit < LogStash::Filters::Base
   end
 
   def find_path_type(paths, type)
-    return paths.find { |p| p.nametype == type } unless paths.nil?
+    return paths.find { |p| p["nametype"] == type } unless paths.nil?
   end
 
   def get_path_name(path)
